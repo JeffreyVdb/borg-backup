@@ -1,0 +1,27 @@
+@go.Package { name = "github.com/JeffreyVdb/borg-backup/internal/config" }
+@ModuleInfo { minPklVersion = "0.25.1" }
+module co.vandenborne.BackupConfig
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.6.0#/go.pkl"
+
+typealias ExcludePattern = String(
+    startsWith("fm:")
+    || startsWith("re:")
+    || startsWith("sh:")
+    || startsWith("pp:")
+    || startsWith("pf:")
+  )
+
+typealias EncryptionType = "none"|"keyfile"|"repokey"|"keyfile-blake2"|"repokey-blake2"|"authenticated-blake2"
+
+class Repository {
+  path: String
+  encryption: EncryptionType = "none"
+}
+
+repository: Repository
+cwd: String?
+archiveName: String
+compression: String(this == "none" || this == "lz4" || this.matches(Regex(#"zstd(,\d+)?"#)))
+paths: Listing<String>(this.length > 0)
+excludes: Listing<ExcludePattern>
